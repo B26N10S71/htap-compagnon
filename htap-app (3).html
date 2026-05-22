@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTAP Compagnon</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--rose:#e8637a;--rose-light:#f5c0ca;--rose-pale:#fdf0f2;--navy:#1a2340;--navy-mid:#2c3a5c;--sage:#6b9e8c;--cream:#faf8f5;--text:#2d2d2d;--text-soft:#7a7a8c;--green:#2d7d5a;--blue:#2c4a7c;--purple:#4a3570;--shadow:0 4px 24px rgba(26,35,64,0.10);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+
+header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 60%,#3d2a5c 100%);color:white;padding:24px 16px 28px;position:relative;overflow:hidden;}
+header::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:rgba(232,99,122,0.18);border-radius:50%;}
+.hi{position:relative;z-index:1;}
+.ht{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.hicon{width:46px;height:46px;background:rgba(232,99,122,0.25);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;}
+header h1{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;}
+header p{font-size:12px;opacity:0.7;margin-top:2px;}
+.cbadge{background:rgba(255,255,255,0.1);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px;}
+.cbl{font-size:11px;opacity:0.7;}
+.cbn{font-size:14px;font-weight:600;font-family:'Playfair Display',serif;}
+
+nav{display:flex;background:white;border-bottom:1px solid #ebe9f0;overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+nav::-webkit-scrollbar{display:none;}
+.tb{flex:1;min-width:68px;padding:11px 4px;border:none;background:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--text-soft);display:flex;flex-direction:column;align-items:center;gap:3px;border-bottom:3px solid transparent;touch-action:manipulation;}
+.tb .ti{font-size:18px;}
+.tb.on{color:var(--rose);border-bottom-color:var(--rose);}
+
+.sec{display:none;padding:16px 14px 80px;}
+.sec.on{display:block;}
+
+.card{background:white;border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow);}
+.ct{font-family:'Playfair Display',serif;font-size:17px;color:var(--navy);margin-bottom:3px;}
+.cs{font-size:12px;color:var(--text-soft);margin-bottom:14px;}
+
+.ihero{background:linear-gradient(135deg,var(--rose) 0%,#c24b62 100%);color:white;border-radius:22px;padding:24px 20px;margin-bottom:14px;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(232,99,122,0.35);}
+.ihero::before{content:'💉';position:absolute;right:16px;top:16px;font-size:44px;opacity:0.2;}
+.ihero h2{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:4px;}
+.drow{display:flex;align-items:baseline;gap:8px;margin:12px 0;}
+.dnum{font-family:'Playfair Display',serif;font-size:64px;font-weight:700;line-height:1;}
+.dlbl{font-size:15px;opacity:0.8;}
+.pbar{background:rgba(255,255,255,0.25);border-radius:8px;height:7px;margin:10px 0 6px;overflow:hidden;}
+.pfill{height:100%;background:white;border-radius:8px;}
+.ptxt{font-size:11px;opacity:0.7;}
+
+.dgrid{display:grid;grid-template-columns:1fr 2fr 1fr;gap:8px;margin-bottom:14px;}
+select{border:2px solid #e0ddf0;border-radius:12px;padding:12px 6px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;color:var(--navy);background:white;width:100%;}
+select:focus{border-color:var(--rose);}
+
+.btn-r{background:var(--rose);color:white;border:none;border-radius:13px;padding:16px;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;width:100%;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.btn-w{background:white;color:var(--blue);border:none;border-radius:13px;padding:14px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;width:100%;touch-action:manipulation;box-shadow:0 2px 10px rgba(0,0,0,0.12);margin-top:8px;}
+.btn-p{background:white;color:var(--purple);border:none;border-radius:13px;padding:14px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;width:100%;touch-action:manipulation;box-shadow:0 2px 10px rgba(0,0,0,0.12);margin-top:8px;}
+.btn-del{background:#fff0f0;color:#c24b62;border:1.5px solid #f5c0ca;border-radius:12px;padding:14px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;width:100%;margin-top:12px;touch-action:manipulation;}
+.btn-all{background:#fff0f5;color:#7c0a2a;border:1.5px solid #f5a0b5;border-radius:12px;padding:14px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;width:100%;margin-top:8px;touch-action:manipulation;}
+.btn-note{background:var(--rose);color:white;border:none;border-radius:11px;padding:14px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;width:100%;margin-top:10px;touch-action:manipulation;}
+
+.srow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.scard{background:white;border-radius:16px;padding:16px;box-shadow:var(--shadow);text-align:center;}
+.snum{font-family:'Playfair Display',serif;font-size:30px;color:var(--navy);font-weight:700;}
+.slbl{font-size:11px;color:var(--text-soft);margin-top:2px;}
+
+.ilist{list-style:none;}
+.iitem{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f0eef5;}
+.iitem:last-child{border-bottom:none;}
+.idot{width:11px;height:11px;border-radius:50%;background:var(--rose-light);flex-shrink:0;}
+.idot.nx{background:var(--rose);box-shadow:0 0 0 4px rgba(232,99,122,0.2);}
+.idot.dn{background:var(--sage);}
+.iinfo{flex:1;}
+.idate{font-weight:600;font-size:13px;color:var(--navy);}
+.irel{font-size:11px;color:var(--text-soft);}
+.ibadge{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;}
+.bnx{background:var(--rose-pale);color:var(--rose);}
+.bdn{background:#e8f5f0;color:var(--sage);}
+.bfut{background:#f5f4fc;color:#7c6fbf;}
+
+.urg{background:linear-gradient(135deg,#d4a84b,#b88a35);color:white;border-radius:14px;padding:12px 16px;margin-bottom:14px;display:none;align-items:center;gap:10px;font-size:13px;font-weight:500;}
+.urg.on{display:flex;}
+
+.ph{border-radius:22px;padding:22px 18px;margin-bottom:14px;color:white;position:relative;overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,0.18);}
+.ph.b24{background:linear-gradient(135deg,#4a6fa5,#2c4a7c);}
+.ph.b72{background:linear-gradient(135deg,#6b5b95,#4a3570);}
+.ph::before{content:'🩹';position:absolute;right:14px;top:14px;font-size:40px;opacity:0.18;}
+.ph h2{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:3px;}
+.ptype{font-size:11px;opacity:0.75;margin-bottom:12px;}
+.pcd{display:flex;gap:8px;margin:10px 0;align-items:flex-end;}
+.pblk{text-align:center;background:rgba(255,255,255,0.15);border-radius:10px;padding:8px 12px;min-width:52px;}
+.pnum{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;line-height:1;}
+.plbl2{font-size:9px;opacity:0.7;margin-top:2px;text-transform:uppercase;letter-spacing:0.5px;}
+.psep{font-size:22px;font-weight:700;opacity:0.6;padding-bottom:6px;}
+.pprog{background:rgba(255,255,255,0.2);border-radius:6px;height:6px;margin:8px 0 5px;overflow:hidden;}
+.pprogf{height:100%;background:white;border-radius:6px;}
+.pstat{font-size:11px;opacity:0.8;margin-bottom:8px;}
+.pstat.u{color:#ffd580;font-weight:600;opacity:1;}
+
+.acard{background:linear-gradient(135deg,#1a2340,#2c3a5c);color:white;border-radius:18px;padding:20px;margin-bottom:14px;}
+.acard h3{font-family:'Playfair Display',serif;font-size:17px;margin-bottom:12px;}
+.pcard{background:linear-gradient(135deg,#2d7d5a,#1a5c3e);color:white;border-radius:18px;padding:20px;margin-bottom:14px;}
+.pcard h3{font-family:'Playfair Display',serif;font-size:17px;margin-bottom:12px;}
+.arow{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.1);}
+.arow:last-child{border-bottom:none;padding-bottom:0;}
+.albl{font-size:13px;}
+.asub{font-size:11px;opacity:0.6;margin-top:2px;}
+.tog{position:relative;width:46px;height:25px;cursor:pointer;}
+.tog input{opacity:0;width:0;height:0;}
+.togsl{position:absolute;inset:0;background:rgba(255,255,255,0.2);border-radius:25px;transition:0.3s;}
+.togsl::before{content:'';position:absolute;height:19px;width:19px;left:3px;bottom:3px;background:white;border-radius:50%;transition:0.3s;}
+.tog input:checked+.togsl{background:var(--rose);}
+.tog input:checked+.togsl::before{transform:translateX(21px);}
+
+.acc{margin-bottom:10px;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);}
+.ach{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;background:white;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.ach:active{background:var(--rose-pale);}
+.act{display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--navy);pointer-events:none;}
+.acarr{font-size:16px;color:var(--text-soft);transition:transform 0.3s;display:inline-block;pointer-events:none;}
+.acb{display:none;background:#fafbff;padding:16px 18px;font-size:13px;line-height:1.75;color:#4a4a5a;border-top:1px solid #ebe9f4;}
+.acc.op .acarr{transform:rotate(180deg);}
+.acc.op .ach{background:var(--rose-pale);}
+.acc.op .acb{display:block;}
+
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.schip{background:white;border:1.5px solid #ebe9f4;border-radius:10px;padding:8px 10px;font-size:12px;text-align:center;}
+.schip .si{font-size:20px;display:block;margin-bottom:3px;}
+
+.infoh{background:linear-gradient(135deg,#2c3a5c,#1a2340);color:white;border-radius:22px;padding:24px 20px;margin-bottom:14px;}
+.infoh h2{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:8px;}
+.infoh p{font-size:13px;line-height:1.7;opacity:0.85;}
+
+.ninput{width:100%;border:1.5px solid #e0ddf0;border-radius:12px;padding:12px;font-family:'DM Sans',sans-serif;font-size:14px;resize:none;height:90px;outline:none;}
+.ninput:focus{border-color:var(--rose);}
+.nitem{background:white;border-radius:13px;padding:13px 15px;margin-bottom:10px;box-shadow:var(--shadow);border-left:4px solid var(--rose);}
+.ndate{font-size:11px;color:var(--text-soft);margin-bottom:5px;}
+.ntext{font-size:13px;line-height:1.6;}
+
+.phist{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f0eef5;font-size:12px;}
+.phist:last-child{border-bottom:none;}
+.pb24{background:#e8f0fa;color:#2c4a7c;font-size:11px;padding:3px 8px;border-radius:20px;font-weight:600;}
+.pb72{background:#f0ebfa;color:#4a3570;font-size:11px;padding:3px 8px;border-radius:20px;font-weight:600;}
+.ritem{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f0eef5;}
+.ritem:last-child{border-bottom:none;}
+
+.toast{position:fixed;bottom:85px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:white;padding:11px 20px;border-radius:28px;font-size:13px;font-weight:500;opacity:0;transition:all 0.4s;z-index:300;white-space:nowrap;pointer-events:none;}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<header>
+<div class="hi">
+  <div class="ht">
+    <div class="hicon">🫀</div>
+    <div><h1>HTAP Compagnon</h1><p>Votre allié au quotidien</p></div>
+  </div>
+  <div class="cbadge">
+    <span style="font-size:16px">💙</span>
+    <div><div class="cbl">Créée par une patiente, pour les patients</div><div class="cbn">Najat Boumerdas</div></div>
+  </div>
+</div>
+</header>
+
+<nav>
+  <button class="tb on" id="t1" onclick="goTab(1)"><span class="ti">💉</span>Injection</button>
+  <button class="tb" id="t2" onclick="goTab(2)"><span class="ti">🩹</span>Perfusion</button>
+  <button class="tb" id="t3" onclick="goTab(3)"><span class="ti">🔔</span>Alarmes</button>
+  <button class="tb" id="t4" onclick="goTab(4)"><span class="ti">📖</span>Maladie</button>
+  <button class="tb" id="t5" onclick="goTab(5)"><span class="ti">📝</span>Carnet</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<!-- ══ INJECTION ══ -->
+<div class="sec on" id="s1">
+  <div class="urg" id="urgBanner"><span>⚠️</span><span id="urgText">Attention !</span></div>
+
+  <div class="ihero">
+    <h2>Prochaine injection</h2>
+    <p class="isub" id="heroDate">Configurez votre dernière injection</p>
+    <div class="drow"><span class="dnum" id="daysN">--</span><span class="dlbl" id="daysL">jours restants</span></div>
+    <div class="pbar"><div class="pfill" id="pFill" style="width:0%"></div></div>
+    <p class="ptxt" id="pTxt">Cycle de 21 jours</p>
+  </div>
+
+  <div class="card">
+    <div class="ct">💉 Enregistrer une injection</div>
+    <div class="cs">Choisissez le jour, le mois et l'année</div>
+    <div class="dgrid">
+      <select id="injJ"></select>
+      <select id="injM">
+        <option value="01">Janvier</option><option value="02">Février</option>
+        <option value="03">Mars</option><option value="04">Avril</option>
+        <option value="05">Mai</option><option value="06">Juin</option>
+        <option value="07">Juillet</option><option value="08">Août</option>
+        <option value="09">Septembre</option><option value="10">Octobre</option>
+        <option value="11">Novembre</option><option value="12">Décembre</option>
+      </select>
+      <select id="injA">
+        <option value="2024">2024</option><option value="2025">2025</option>
+        <option value="2026">2026</option><option value="2027">2027</option>
+      </select>
+    </div>
+    <button class="btn-r" onclick="saveInj()">✅ Confirmer l'injection</button>
+  </div>
+
+  <div class="srow">
+    <div class="scard"><div class="snum" id="stTotal">0</div><div class="slbl">Injections réalisées</div></div>
+    <div class="scard"><div class="snum">21</div><div class="slbl">Jours entre injections</div></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">📅 Calendrier</div>
+    <div class="cs">Historique et prochaines dates</div>
+    <ul class="ilist" id="injList"><li class="iitem" style="justify-content:center;color:var(--text-soft);font-size:13px">Aucune injection enregistrée.</li></ul>
+    <button class="btn-del" onclick="delInj()">🗑️ Effacer toutes les injections</button>
+    <button class="btn-all" onclick="delTout()">🔄 TOUT effacer — donner à un autre malade</button>
+  </div>
+</div>
+
+<!-- ══ PERFUSION ══ -->
+<div class="sec" id="s2">
+  <div class="ph b24">
+    <h2>🔵 Poche 24 heures</h2>
+    <div class="ptype">Changement toutes les 24h — Époprosténol / Tréprostinil IV</div>
+    <div class="pcd">
+      <div class="pblk"><div class="pnum" id="h24h">--</div><div class="plbl2">heures</div></div>
+      <div class="psep">:</div>
+      <div class="pblk"><div class="pnum" id="h24m">--</div><div class="plbl2">minutes</div></div>
+      <div class="psep">:</div>
+      <div class="pblk"><div class="pnum" id="h24s">--</div><div class="plbl2">secondes</div></div>
+    </div>
+    <div class="pprog"><div class="pprogf" id="h24b" style="width:0%"></div></div>
+    <div class="pstat" id="h24st">Appuyez sur le bouton pour démarrer</div>
+    <button class="btn-w" onclick="startP(24)">🔄 Nouvelle poche posée maintenant</button>
+  </div>
+
+  <div class="ph b72">
+    <h2>🟣 Poche 72 heures</h2>
+    <div class="ptype">Changement toutes les 72h — Tréprostinil SC / IV</div>
+    <div class="pcd">
+      <div class="pblk"><div class="pnum" id="h72h">--</div><div class="plbl2">heures</div></div>
+      <div class="psep">:</div>
+      <div class="pblk"><div class="pnum" id="h72m">--</div><div class="plbl2">minutes</div></div>
+      <div class="psep">:</div>
+      <div class="pblk"><div class="pnum" id="h72s">--</div><div class="plbl2">secondes</div></div>
+    </div>
+    <div class="pprog"><div class="pprogf" id="h72b" style="width:0%"></div></div>
+    <div class="pstat" id="h72st">Appuyez sur le bouton pour démarrer</div>
+    <button class="btn-p" onclick="startP(72)">🔄 Nouvelle poche posée maintenant</button>
+  </div>
+
+  <div class="card">
+    <div class="ct">📋 Historique des changements</div>
+    <div class="cs">Derniers changements de poches</div>
+    <div id="pHist" style="font-size:13px;color:var(--text-soft);text-align:center;padding:8px 0">Aucun changement enregistré.</div>
+    <button class="btn-del" onclick="delPoches()">🗑️ Effacer l'historique des perfusions</button>
+  </div>
+
+  <div style="background:#fff8e8;border:1.5px solid #f5d98a;border-radius:14px;padding:14px 16px;font-size:13px;color:#7a5c00;line-height:1.6;">
+    ⚠️ <strong>Important :</strong> Ne jamais interrompre une perfusion d'époprosténol sans avis médical.
+  </div>
+</div>
+
+<!-- ══ ALARMES ══ -->
+<div class="sec" id="s3">
+  <div class="acard">
+    <h3>🔔 Rappels injection</h3>
+    <div class="arow">
+      <div><div class="albl">Rappel J-7</div><div class="asub">7 jours avant l'injection</div></div>
+      <label class="tog"><input type="checkbox" id="a7" checked onchange="saveAl()"><span class="togsl"></span></label>
+    </div>
+    <div class="arow">
+      <div><div class="albl">Rappel J-3</div><div class="asub">3 jours avant l'injection</div></div>
+      <label class="tog"><input type="checkbox" id="a3" checked onchange="saveAl()"><span class="togsl"></span></label>
+    </div>
+    <div class="arow">
+      <div><div class="albl">Rappel J-1</div><div class="asub">La veille de l'injection</div></div>
+      <label class="tog"><input type="checkbox" id="a1" checked onchange="saveAl()"><span class="togsl"></span></label>
+    </div>
+    <div class="arow">
+      <div><div class="albl">Jour J — Matin</div><div class="asub">Le jour même</div></div>
+      <label class="tog"><input type="checkbox" id="aJ" checked onchange="saveAl()"><span class="togsl"></span></label>
+    </div>
+  </div>
+
+  <div class="pcard">
+    <h3>⚖️ Pesée — Sotatercept</h3>
+    <div class="arow">
+      <div><div class="albl">Pesée — mercredi avant</div><div class="asub">Le mercredi de la semaine précédente</div></div>
+      <label class="tog"><input type="checkbox" id="aP" checked onchange="saveAl()"><span class="togsl"></span></label>
+    </div>
+    <div class="arow" style="border-bottom:none;padding-bottom:0">
+      <div><div class="albl">Pesée — veille J-1</div><div class="asub">La veille de l'injection</div></div>
+      <label class="tog"><input type="checkbox" id="aP1" checked onchange="saveAl()"><span class="togsl"></span></label>
+    </div>
+  </div>
+
+  <div style="background:#e8f5ef;border:1.5px solid #a8d5bc;border-radius:14px;padding:13px 16px;font-size:13px;color:#1a5c3e;line-height:1.6;margin-bottom:14px;">
+    ⚖️ <strong>Pourquoi se peser ?</strong> La dose de sotatercept est calculée selon votre poids. Une pesée le mercredi avant permet d'ajuster la dose.
+  </div>
+
+  <div class="card">
+    <div class="ct">⏰ Heure du rappel</div>
+    <div class="cs">Heure à laquelle vous souhaitez être rappelé</div>
+    <input type="time" id="alTime" value="08:00" onchange="saveAl()" style="width:100%;border:1.5px solid #e0ddf0;border-radius:11px;padding:13px;font-size:18px;font-family:'DM Sans',sans-serif;outline:none;text-align:center;color:var(--navy);font-weight:600;">
+  </div>
+
+  <div class="card">
+    <div class="ct">📋 Prochains rappels</div>
+    <div class="cs">Injections et pesées à venir</div>
+    <div id="alList" style="font-size:13px;color:var(--text-soft)">Enregistrez une injection pour voir vos rappels.</div>
+    <button class="btn-del" onclick="delAl()">🗑️ Effacer les rappels et repartir à zéro</button>
+  </div>
+</div>
+
+<!-- ══ MALADIE ══ -->
+<div class="sec" id="s4">
+  <div class="infoh">
+    <h2>Qu'est-ce que l'HTAP ?</h2>
+    <p>L'Hypertension Artérielle Pulmonaire est une maladie rare et grave qui touche les artères pulmonaires. Elle se caractérise par une augmentation anormale de la pression dans ces vaisseaux, rendant le travail du cœur de plus en plus difficile.</p>
+  </div>
+
+  <div class="acc" id="ac1">
+    <div class="ach" onclick="togAcc('ac1')">
+      <span class="act"><span>🔬</span> Comment ça fonctionne ?</span>
+      <span class="acarr">▾</span>
+    </div>
+    <div class="acb">Dans l'HTAP, les petites artères des poumons se rétrécissent progressivement. Le ventricule droit doit pomper avec plus de force, ce qui peut provoquer une insuffisance cardiaque droite.<br><br>La maladie peut être idiopathique, héréditaire, ou associée à d'autres maladies (connectivites, cardiopathies congénitales, hypertension portale, HIV...).</div>
+  </div>
+
+  <div class="acc" id="ac2">
+    <div class="ach" onclick="togAcc('ac2')">
+      <span class="act"><span>😮‍💨</span> Les symptômes principaux</span>
+      <span class="acarr">▾</span>
+    </div>
+    <div class="acb">
+      <div class="sgrid">
+        <div class="schip"><span class="si">😮‍💨</span>Essoufflement</div>
+        <div class="schip"><span class="si">😴</span>Fatigue intense</div>
+        <div class="schip"><span class="si">💫</span>Vertiges</div>
+        <div class="schip"><span class="si">💙</span>Cyanose</div>
+        <div class="schip"><span class="si">🦵</span>Oedèmes</div>
+        <div class="schip"><span class="si">💓</span>Palpitations</div>
+        <div class="schip"><span class="si">🤕</span>Douleurs thoraciques</div>
+        <div class="schip"><span class="si">🚶</span>Intolérance effort</div>
+      </div>
+      <p style="margin-top:10px;font-size:12px;color:#c24b62;font-weight:500;">⚠️ Les symptômes sont souvent confondus avec l'asthme. Le diagnostic prend en moyenne 2 à 3 ans.</p>
+    </div>
+  </div>
+
+  <div class="acc" id="ac3">
+    <div class="ach" onclick="togAcc('ac3')">
+      <span class="act"><span>💊</span> Les traitements disponibles</span>
+      <span class="acarr">▾</span>
+    </div>
+    <div class="acb">
+      🔵 <strong>Analogues de la prostacycline</strong> : Époprosténol, Tréprostinil, Iloprost<br><br>
+      🟢 <strong>Antagonistes des récepteurs de l'endothéline</strong> : Bosentan, Ambrisentan, Macitentan<br><br>
+      🟡 <strong>Inhibiteurs de la PDE-5</strong> : Sildénafil, Tadalafil<br><br>
+      🔴 <strong>Stimulateurs de la guanylate cyclase</strong> : Riociguat<br><br>
+      🟣 <strong>Sotatercept</strong> : Nouveau traitement, injection toutes les 3 semaines. Cette application a été créée pour vous aider à ne jamais l'oublier !
+    </div>
+  </div>
+
+  <div class="acc" id="ac4">
+    <div class="ach" onclick="togAcc('ac4')">
+      <span class="act"><span>🏥</span> Vivre avec l'HTAP</span>
+      <span class="acarr">▾</span>
+    </div>
+    <div class="acb">
+      ✅ Suivre scrupuleusement son traitement<br>
+      ✅ Adapter son activité physique (marche douce recommandée)<br>
+      ✅ Éviter les efforts brusques et les altitudes élevées<br>
+      ✅ S'entourer d'une équipe médicale spécialisée<br><br>
+      ❌ Éviter la grossesse (risque élevé)<br>
+      ❌ Pas de médicaments sans avis médical<br><br>
+      🤝 <strong>HTAPFrance</strong> : htapfrance.com<br>
+      🤝 Réseau PVRIM (centres de référence)
+    </div>
+  </div>
+
+  <div class="acc" id="ac5">
+    <div class="ach" onclick="togAcc('ac5')">
+      <span class="act"><span>❓</span> Questions fréquentes</span>
+      <span class="acarr">▾</span>
+    </div>
+    <div class="acb">
+      <strong>L'HTAP est-elle mortelle ?</strong><br>
+      C'est une maladie grave mais les traitements ont considérablement amélioré le pronostic. Un suivi régulier est essentiel.<br><br>
+      <strong>Peut-on travailler avec l'HTAP ?</strong><br>
+      Selon la sévérité, beaucoup maintiennent une activité adaptée. Une RQTH peut faciliter les aménagements.<br><br>
+      <strong>Pourquoi les injections toutes les 3 semaines ?</strong><br>
+      Le sotatercept a une longue demi-vie permettant un espacement des injections tout en maintenant une concentration stable dans le sang.
+    </div>
+  </div>
+</div>
+
+<!-- ══ CARNET ══ -->
+<div class="sec" id="s5">
+  <div class="card">
+    <div class="ct">📝 Mon carnet de santé</div>
+    <div class="cs">Notez vos ressentis, effets secondaires, questions pour le médecin...</div>
+    <textarea class="ninput" id="noteIn" placeholder="Comment je me sens aujourd'hui..."></textarea>
+    <button class="btn-note" onclick="addNote()">✚ Ajouter une note</button>
+    <button class="btn-del" onclick="delNotes()">🗑️ Effacer toutes les notes</button>
+  </div>
+  <div id="noteList"></div>
+</div>
+
+<script>
+var CYCLE = 21;
+var D = {
+  inj:[], 
+  al:{j7:true,j3:true,j1:true,jj:true,poids:true,poids1:true,time:'08:00'},
+  notes:[], 
+  po:{h24:null,h72:null}
+};
+
+function p2(n){return String(n).padStart(2,'0');}
+
+function save(){try{localStorage.setItem('htap4',JSON.stringify(D));}catch(e){}}
+function load(){
+  try{
+    var x=localStorage.getItem('htap4');
+    if(x){
+      var p=JSON.parse(x);
+      if(p.inj)D.inj=p.inj;
+      if(p.al)D.al=Object.assign({},D.al,p.al);
+      if(p.notes)D.notes=p.notes;
+      if(p.po)D.po=Object.assign({},D.po,p.po);
+    }
+  }catch(e){}
+}
+
+function goTab(n){
+  for(var i=1;i<=5;i++){
+    document.getElementById('s'+i).classList.remove('on');
+    document.getElementById('t'+i).classList.remove('on');
+  }
+  document.getElementById('s'+n).classList.add('on');
+  document.getElementById('t'+n).classList.add('on');
+}
+
+function togAcc(id){
+  var el=document.getElementById(id);
+  if(el.classList.contains('op'))el.classList.remove('op');
+  else el.classList.add('op');
+}
+
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('on');
+  setTimeout(function(){t.classList.remove('on');},3000);
+}
+
+function addDays(ds,n){
+  var d=new Date(ds+'T12:00:00');
+  d.setDate(d.getDate()+n);
+  return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
+}
+function diff(ds){
+  var t=new Date();t.setHours(0,0,0,0);
+  var d=new Date(ds+'T00:00:00');d.setHours(0,0,0,0);
+  return Math.round((d-t)/86400000);
+}
+function fmt(ds){
+  var d=new Date(ds+'T12:00:00');
+  return d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+}
+function getPesee(injDs){
+  var d=new Date(injDs+'T12:00:00');
+  var p=new Date(d);
+  p.setDate(p.getDate()-6);
+  while(p.getDay()!==3)p.setDate(p.getDate()-1);
+  return p.getFullYear()+'-'+p2(p.getMonth()+1)+'-'+p2(p.getDate());
+}
+
+// ── INJECTION ──
+function saveInj(){
+  var j=document.getElementById('injJ').value;
+  var m=document.getElementById('injM').value;
+  var a=document.getElementById('injA').value;
+  var ds=a+'-'+m+'-'+j;
+  D.inj.push(ds);
+  D.inj.sort();
+  save();
+  drawInj();
+  drawAl();
+  toast('Injection du '+j+'/'+m+'/'+a+' enregistree !');
+}
+
+function delInj(){
+  D.inj=[];save();drawInj();drawAl();
+  toast('Injections effacees !');
+}
+
+function delTout(){
+  D.inj=[];
+  D.al={j7:true,j3:true,j1:true,jj:true,poids:true,poids1:true,time:'08:00'};
+  D.notes=[];
+  D.po={h24:null,h72:null};
+  save();drawInj();drawAl();drawNotes();drawPoches();drawPHist();
+  toast('Application remise a zero !');
+}
+
+function drawInj(){
+  var inj=D.inj;
+  var last=inj.length?inj[inj.length-1]:null;
+  var next=last?addDays(last,CYCLE):null;
+
+  if(next){
+    var d=diff(next);
+    document.getElementById('heroDate').textContent='Le '+fmt(next);
+    document.getElementById('daysN').textContent=d<0?'0':String(d);
+    document.getElementById('daysL').textContent=d<0?'jours (depasse!)':d===0?"AUJOURD'HUI !":d===1?'jour restant':'jours restants';
+    var t=new Date();t.setHours(0,0,0,0);
+    var l=new Date(last+'T00:00:00');l.setHours(0,0,0,0);
+    var el=Math.round((t-l)/86400000);
+    document.getElementById('pFill').style.width=Math.min(100,Math.max(0,(el/CYCLE)*100))+'%';
+    document.getElementById('pTxt').textContent='Cycle : '+el+' / 21 jours ecoules';
+    var b=document.getElementById('urgBanner');
+    if(d<=3&&d>=0){
+      b.classList.add('on');
+      document.getElementById('urgText').textContent=d===0?"Aujourd'hui ! Ne manquez pas votre injection.":'Plus que '+d+' jour'+(d>1?'s':'')+' avant votre injection !';
+    }else if(d<0){
+      b.classList.add('on');
+      document.getElementById('urgText').textContent='Votre injection etait prevue — contactez votre medecin.';
+    }else{b.classList.remove('on');}
+  }else{
+    document.getElementById('heroDate').textContent='Configurez votre premiere injection';
+    document.getElementById('daysN').textContent='--';
+    document.getElementById('pFill').style.width='0%';
+    document.getElementById('pTxt').textContent='Cycle de 21 jours';
+    document.getElementById('urgBanner').classList.remove('on');
+  }
+
+  document.getElementById('stTotal').textContent=String(inj.length);
+  var ul=document.getElementById('injList');ul.innerHTML='';
+  if(!inj.length){
+    var li=document.createElement('li');li.className='iitem';
+    li.style.cssText='justify-content:center;color:var(--text-soft);font-size:13px';
+    li.textContent='Aucune injection enregistree.';ul.appendChild(li);return;
+  }
+  if(next){
+    var cur=next;
+    for(var i=0;i<4;i++){
+      var dv=diff(cur);
+      var li2=document.createElement('li');li2.className='iitem';
+      var rel=dv===0?"Aujourd'hui !":dv>0?'Dans '+dv+' jour'+(dv>1?'s':''):'Il y a '+(-dv)+' jour'+(-dv>1?'s':'');
+      var bc=i===0?'bnx':'bfut';var bt=i===0?'Prochaine':'A venir';var dc=i===0?'idot nx':'idot';
+      li2.innerHTML='<span class="'+dc+'"></span><div class="iinfo"><div class="idate">'+fmt(cur)+'</div><div class="irel">'+rel+'</div></div><span class="ibadge '+bc+'">'+bt+'</span>';
+      ul.appendChild(li2);cur=addDays(cur,CYCLE);
+    }
+  }
+  var sep=document.createElement('li');
+  sep.style.cssText='padding:8px 0;font-size:11px;color:var(--text-soft);font-weight:600;text-transform:uppercase;';
+  sep.textContent='Injections passees';ul.appendChild(sep);
+  var done=inj.slice().reverse().slice(0,3);
+  for(var j=0;j<done.length;j++){
+    var dj=diff(done[j]);var lj=document.createElement('li');lj.className='iitem';
+    lj.innerHTML='<span class="idot dn"></span><div class="iinfo"><div class="idate">'+fmt(done[j])+'</div><div class="irel">Il y a '+(-dj)+' jour'+(-dj>1?'s':'')+'</div></div><span class="ibadge bdn">Faite</span>';
+    ul.appendChild(lj);
+  }
+}
+
+// ── PERFUSION ──
+function startP(h){
+  D.po['h'+h]=new Date().toISOString();save();drawPoches();drawPHist();
+  toast('Poche '+h+'h demarree !');
+}
+function delPoches(){
+  D.po={h24:null,h72:null};save();drawPoches();drawPHist();
+  toast('Historique efface !');
+}
+
+function drawPoches(){
+  [24,72].forEach(function(h){
+    var k='h'+h;var s=D.po[k];var tm=h*3600000;
+    if(!s){
+      document.getElementById(k+'h').textContent='--';
+      document.getElementById(k+'m').textContent='--';
+      document.getElementById(k+'s').textContent='--';
+      document.getElementById(k+'b').style.width='0%';
+      document.getElementById(k+'st').textContent='Appuyez sur le bouton pour demarrer';
+      document.getElementById(k+'st').className='pstat';return;
+    }
+    var el=Date.now()-new Date(s).getTime();
+    var rem=Math.max(0,tm-el);
+    var pct=Math.min(100,(el/tm)*100);
+    var ts=Math.floor(rem/1000);
+    document.getElementById(k+'h').textContent=p2(Math.floor(ts/3600));
+    document.getElementById(k+'m').textContent=p2(Math.floor((ts%3600)/60));
+    document.getElementById(k+'s').textContent=p2(ts%60);
+    document.getElementById(k+'b').style.width=pct+'%';
+    var st=document.getElementById(k+'st');
+    if(rem<=0){st.textContent='CHANGEMENT DE POCHE NECESSAIRE !';st.className='pstat u';}
+    else if(rem<7200000){st.textContent='Moins de '+Math.ceil(rem/3600000)+'h — Preparez le changement';st.className='pstat u';}
+    else{
+      var sd=new Date(s);var cd=new Date(new Date(s).getTime()+tm);
+      st.textContent='Posee le '+sd.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})+' a '+sd.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+' — Changer le '+cd.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})+' a '+cd.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+      st.className='pstat';
+    }
+  });
+}
+
+function drawPHist(){
+  var c=document.getElementById('pHist');var html='';
+  [24,72].forEach(function(h){
+    var s=D.po['h'+h];if(!s)return;
+    var sd=new Date(s);var nd=new Date(new Date(s).getTime()+h*3600000);
+    html+='<div class="phist"><div><div style="font-weight:500;color:var(--navy)">'+sd.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})+' '+sd.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+'</div><div style="color:var(--text-soft);font-size:11px">Changer : '+nd.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})+' a '+nd.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+'</div></div><span class="pb'+h+'">'+h+'h</span></div>';
+  });
+  c.innerHTML=html||'<div style="text-align:center;padding:8px 0;color:var(--text-soft)">Aucun changement enregistre.</div>';
+}
+
+// ── ALARMES ──
+function saveAl(){
+  D.al={
+    j7:document.getElementById('a7').checked,
+    j3:document.getElementById('a3').checked,
+    j1:document.getElementById('a1').checked,
+    jj:document.getElementById('aJ').checked,
+    poids:document.getElementById('aP').checked,
+    poids1:document.getElementById('aP1').checked,
+    time:document.getElementById('alTime').value
+  };
+  save();drawAl();toast('Preferences sauvegardees !');
+}
+
+function delAl(){
+  D.al={j7:true,j3:true,j1:true,jj:true,poids:true,poids1:true,time:'08:00'};
+  D.inj=[];save();drawInj();drawAl();
+  toast('Rappels remis a zero !');
+}
+
+function drawAl(){
+  var a=D.al;
+  document.getElementById('a7').checked=a.j7!==false;
+  document.getElementById('a3').checked=a.j3!==false;
+  document.getElementById('a1').checked=a.j1!==false;
+  document.getElementById('aJ').checked=a.jj!==false;
+  document.getElementById('aP').checked=a.poids!==false;
+  document.getElementById('aP1').checked=a.poids1!==false;
+  document.getElementById('alTime').value=a.time||'08:00';
+
+  var inj=D.inj;var next=inj.length?addDays(inj[inj.length-1],CYCLE):null;
+  var c=document.getElementById('alList');
+  if(!next){c.textContent='Enregistrez une injection pour voir vos rappels.';return;}
+
+  var rs=[];var pesee=getPesee(next);
+  if(a.poids!==false)rs.push({date:pesee,label:'Pesee sotatercept (mercredi)',color:'#2d7d5a',icon:'⚖️'});
+  if(a.j7!==false)rs.push({date:addDays(next,-7),label:'Rappel injection J-7',color:'var(--navy)',icon:'🔔'});
+  if(a.j3!==false)rs.push({date:addDays(next,-3),label:'Rappel injection J-3',color:'var(--navy)',icon:'🔔'});
+  if(a.poids1!==false)rs.push({date:addDays(next,-1),label:'Pesee sotatercept J-1',color:'#2d7d5a',icon:'⚖️'});
+  if(a.j1!==false)rs.push({date:addDays(next,-1),label:'Rappel injection J-1',color:'var(--navy)',icon:'🔔'});
+  if(a.jj!==false)rs.push({date:next,label:"Jour J — Injection !",color:'var(--rose)',icon:'💉'});
+  rs.sort(function(a,b){return a.date<b.date?-1:1;});
+  if(!rs.length){c.textContent='Aucun rappel active.';return;}
+  var t=a.time||'08:00';var html='';
+  rs.forEach(function(r){
+    var d=diff(r.date);
+    var w=d<0?'Passe':d===0?"Aujourd'hui":'Dans '+d+'j';
+    html+='<div class="ritem"><div><div style="font-size:13px;font-weight:600;color:'+r.color+'">'+r.icon+' '+r.label+'</div><div style="font-size:11px;color:var(--text-soft)">'+fmt(r.date)+' a '+t+'</div></div><div style="font-size:12px;color:var(--text-soft);margin-left:8px;white-space:nowrap">'+w+'</div></div>';
+  });
+  c.innerHTML=html;
+}
+
+// ── NOTES ──
+function addNote(){
+  var txt=document.getElementById('noteIn').value.trim();
+  if(!txt){toast('Ecrivez quelque chose !');return;}
+  D.notes.unshift({id:Date.now(),date:new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'}),text:txt});
+  save();document.getElementById('noteIn').value='';drawNotes();
+  toast('Note enregistree !');
+}
+function delNotes(){
+  D.notes=[];save();drawNotes();toast('Notes effacees !');
+}
+function drawNotes(){
+  var c=document.getElementById('noteList');
+  if(!D.notes.length){c.innerHTML='<p style="text-align:center;color:var(--text-soft);font-size:13px;margin-top:8px">Aucune note.</p>';return;}
+  var html='';
+  D.notes.forEach(function(n){
+    html+='<div class="nitem"><div class="ndate">'+n.date+'</div><div class="ntext">'+n.text+'</div></div>';
+  });
+  c.innerHTML=html;
+}
+
+// ── INIT DROPDOWNS ──
+function initDropdowns(){
+  var jSel=document.getElementById('injJ');
+  for(var d=1;d<=31;d++){
+    var o=document.createElement('option');
+    o.value=p2(d);o.textContent=String(d);jSel.appendChild(o);
+  }
+  var now=new Date();
+  document.getElementById('injJ').value=p2(now.getDate());
+  document.getElementById('injM').value=p2(now.getMonth()+1);
+  document.getElementById('injA').value=String(now.getFullYear());
+}
+
+// ── START ──
+load();
+initDropdowns();
+drawInj();
+drawAl();
+drawNotes();
+drawPoches();
+drawPHist();
+setInterval(drawPoches,1000);
+</script>
+</body>
+</html>
